@@ -22,8 +22,8 @@ const MyMap = () => {
   // console.log(colorbrewer.schemeGroups.sequential);
   // console.log(colorbrewer)
 
-  const center = [37.983810, 23.727539]
-  const zoom = 7
+  const center = [35.4564, -88.3301]
+  const zoom = 2
 
 
   const [geodata, setGeodata] = useState(null);
@@ -80,36 +80,55 @@ const MyMap = () => {
         return k + ": " + feature.properties[k];
       }).join("<br />"), {
         maxHeight: 200
-      });
+      }
+      );
     }
   }
 
   const style = (feature) => {
     console.log ( feature );
     return ({
-      opacity: 1,
-      fillOpacity: 0.7,
       radius: 6,
       weight: 2,
       dashArray: "2",
       // from http://stackoverflow.com/a/15710692
       // color: colorbrewer.Spectral[11][Math.abs(JSON.stringify(feature).split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0)) % 11]
-      color: colorbrewer.Spectral[11] [ Math.ceil(Math.random() * 1000) % 11]
-
+      color: 'black'
     });
   }
-
-
+  const clickedStyle = (feature) => {
+    console.log ( feature );
+    return ({
+      radius: 6,
+      weight: 2,
+      dashArray: "2",
+      // from http://stackoverflow.com/a/15710692
+      // color: colorbrewer.Spectral[11][Math.abs(JSON.stringify(feature).split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0)) % 11]
+      color: 'red'
+    });
+  }
+  const [myStyle, setMyStyle] = useState(style);
 
   
+  const changeStyle = () => {
+    const updatedStyle = {
+      color: 'red'
+    };
+    setMyStyle(updatedStyle, () => {
+      console.log(myStyle);
+    });
+  };
+
+
   let ShapeLayers = null;
   if (geodata !== null) {
     ShapeLayers = (
       <Overlay checked name={geodata.name}>
         <ShapeFile 
           data={geodata.data} 
-          style={style} 
+          style={myStyle} 
           onEachFeature={onEachFeature} 
+          onClick={changeStyle}
           />
       </Overlay>);
   }
@@ -240,7 +259,7 @@ const MyMap = () => {
 
                         if ( !apiKey || apiKey !== 'none') {
                           return (
-                            <BaseLayer checked={providerName==='OpenStreetMap' && varName==='Mapnik'} key={varIdx} name={varFullName}>
+                            <BaseLayer checked={providerName==='OpenStreetMap' && varName==='BlackWhite'} key={varIdx} name={varFullName}>
                               <TileLayer url={varUrl} attribution={varAttribution} />
                             </BaseLayer>
                           )      
